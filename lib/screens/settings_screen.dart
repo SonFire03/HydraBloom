@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_strings.dart';
 import '../models/hydration_settings.dart';
 import '../services/hydration_service.dart';
+import '../widgets/heat_mode_card.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -44,6 +45,12 @@ class SettingsScreen extends StatelessWidget {
             title: Text(t.t('adhdMode')),
             subtitle: Text(t.t('adhdModeSub')),
           ),
+        ),
+        HeatModeCard(
+          enabled: settings.heatModeEnabled,
+          onChanged: (v) => service.toggleHeatMode(v),
+          title: t.t('heatMode'),
+          subtitle: t.t('heatModeSubtitle'),
         ),
         Card(
           child: ListTile(

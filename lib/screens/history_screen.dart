@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_strings.dart';
 import '../models/hydration_day.dart';
 import '../services/hydration_service.dart';
+import '../widgets/streak_card.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
@@ -28,6 +29,12 @@ class HistoryScreen extends StatelessWidget {
 
     return ListView(
       children: [
+        StreakCard(
+          streak: service.streak,
+          title: t.t('streakCurrent'),
+          subtitle: t.t('streakDays', {'count': service.streak.toString()}),
+        ),
+        const SizedBox(height: 10),
         _StatsCard(
           t: t,
           avg7: avg7,

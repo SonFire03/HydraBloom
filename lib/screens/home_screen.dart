@@ -7,7 +7,6 @@ import '../l10n/app_strings.dart';
 import '../services/hydration_service.dart';
 import '../widgets/cute_action_button.dart';
 import '../widgets/flower_progress_widget.dart';
-import '../widgets/heat_mode_card.dart';
 import '../widgets/hydration_progress_card.dart';
 import '../widgets/streak_card.dart';
 import '../widgets/water_counter_card.dart';
@@ -185,13 +184,6 @@ class _HomeContent extends StatelessWidget {
             streak: hydration.streak,
             title: t.t('streakCurrent'),
             subtitle: t.t('streakDays', {'count': hydration.streak.toString()}),
-          ),
-          const SizedBox(height: 12),
-          HeatModeCard(
-            enabled: hydration.settings.heatModeEnabled,
-            onChanged: (value) => hydration.toggleHeatMode(value),
-            title: t.t('heatMode'),
-            subtitle: t.t('heatModeSubtitle'),
           ),
         ],
         const SizedBox(height: 12),
