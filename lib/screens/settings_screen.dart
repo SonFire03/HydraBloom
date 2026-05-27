@@ -21,6 +21,7 @@ class SettingsScreen extends StatelessWidget {
 
     return ListView(
       children: [
+        const _SectionTitle(title: 'Général'),
         Card(
           child: SwitchListTile(
             value: settings.reminderEnabled,
@@ -72,6 +73,8 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 8),
+        const _SectionTitle(title: 'Hydratation'),
         Card(
           child: ListTile(
             title: Text(t.t('dailyGoal')),
@@ -183,6 +186,8 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 8),
+        const _SectionTitle(title: 'Personnalisation'),
         Card(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
@@ -214,6 +219,7 @@ class SettingsScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
+        const _SectionTitle(title: 'Communauté'),
         Center(
           child: Container(
             width: 230,
@@ -267,6 +273,7 @@ class SettingsScreen extends StatelessWidget {
           label: const Text('GitHub'),
         ),
         const SizedBox(height: 8),
+        const _SectionTitle(title: 'Outils'),
         OutlinedButton.icon(
           onPressed: () => service.sendTestNotification(),
           icon: const Icon(Icons.notifications_active_outlined),
@@ -327,13 +334,42 @@ class SettingsScreen extends StatelessWidget {
           label: Text(t.t('importBackup')),
         ),
         const SizedBox(height: 8),
+        const _SectionTitle(title: 'Danger Zone'),
         FilledButton(
-          onPressed: () => service.resetToday(),
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.errorContainer,
+            foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+          ),
+          onPressed: () async {
+            final ok = await _confirmReset(
+              context,
+              title: t.t('resetToday'),
+              message:
+                  'Cette action remet uniquement la journée en cours à zéro.',
+              confirmLabel: t.t('resetToday'),
+            );
+            if (ok == true) {
+              await service.resetToday();
+            }
+          },
           child: Text(t.t('resetToday')),
         ),
         const SizedBox(height: 8),
         OutlinedButton(
-          onPressed: () => service.resetAll(),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.error,
+          ),
+          onPressed: () async {
+            final ok = await _confirmReset(
+              context,
+              title: t.t('resetAll'),
+              message: 'Cette action supprime toutes les données locales.',
+              confirmLabel: t.t('resetAll'),
+            );
+            if (ok == true) {
+              await service.resetAll();
+            }
+          },
           child: Text(t.t('resetAll')),
         ),
       ],
@@ -346,6 +382,51 @@ class SettingsScreen extends StatelessWidget {
       initialTime: TimeOfDay(hour: initialHour, minute: 0),
     );
     return time?.hour;
+  }
+
+  Future<bool?> _confirmReset(
+    BuildContext context, {
+    required String title,
+    required String message,
+    required String confirmLabel,
+  }) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(confirmLabel),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 10, 4, 6),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+      ),
+    );
   }
 }
 
