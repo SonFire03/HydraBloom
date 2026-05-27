@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/app_strings.dart';
 import '../models/hydration_settings.dart';
 import '../services/hydration_service.dart';
 
@@ -12,6 +13,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final service = context.watch<HydrationService>();
     final settings = service.settings;
+    final t = AppStrings.of(settings.languageCode);
 
     Future<void> save(HydrationSettings next) => service.updateSettings(next);
 
@@ -21,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
           child: SwitchListTile(
             value: settings.reminderEnabled,
             onChanged: (v) => save(settings.copyWith(reminderEnabled: v)),
-            title: const Text('Rappels actifs'),
+            title: Text(t.t('remindersOn')),
           ),
         ),
         Card(
@@ -39,13 +41,32 @@ class SettingsScreen extends StatelessWidget {
                 ),
               );
             },
-            title: const Text('Mode TDAH'),
-            subtitle: const Text('Interface simplifiee + rappels doux'),
+            title: Text(t.t('adhdMode')),
+            subtitle: Text(t.t('adhdModeSub')),
           ),
         ),
         Card(
           child: ListTile(
-            title: const Text('Objectif quotidien (ml)'),
+            title: Text(t.t('language')),
+            trailing: DropdownButton<String>(
+              value: settings.languageCode,
+              items: AppStrings.supportedLanguageCodes
+                  .map((code) => DropdownMenuItem(
+                        value: code,
+                        child: Text(t.t('lang_$code')),
+                      ))
+                  .toList(),
+              onChanged: (v) {
+                if (v != null) {
+                  save(settings.copyWith(languageCode: v));
+                }
+              },
+            ),
+          ),
+        ),
+        Card(
+          child: ListTile(
+            title: Text(t.t('dailyGoal')),
             subtitle: Text('${settings.dailyGoalMl} ml'),
             trailing: _NumberAdjuster(
               onMinus: () => save(settings.copyWith(
@@ -63,7 +84,7 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Objectifs rapides'),
+                Text(t.t('quickGoals')),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -84,7 +105,7 @@ class SettingsScreen extends StatelessWidget {
         ),
         Card(
           child: ListTile(
-            title: const Text('Taille d\'un verre (ml)'),
+            title: Text(t.t('glassSize')),
             subtitle: Text('${settings.glassSizeMl} ml'),
             trailing: _NumberAdjuster(
               onMinus: () => save(settings.copyWith(
@@ -102,7 +123,7 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Tailles rapides'),
+                Text(t.t('quickSizes')),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -121,8 +142,8 @@ class SettingsScreen extends StatelessWidget {
         ),
         Card(
           child: ListTile(
-            title: const Text('Intervalle des rappels'),
-            subtitle: Text('${settings.reminderIntervalMinutes} minutes'),
+            title: Text(t.t('reminderInterval')),
+            subtitle: Text('${settings.reminderIntervalMinutes} min'),
             trailing: DropdownButton<int>(
               value: settings.reminderIntervalMinutes,
               items: const [30, 45, 60, 120]
@@ -138,7 +159,7 @@ class SettingsScreen extends StatelessWidget {
         ),
         Card(
           child: ListTile(
-            title: const Text('Heures silencieuses'),
+            title: Text(t.t('quietHours')),
             subtitle:
                 Text('${settings.quietStartHour}h - ${settings.quietEndHour}h'),
             trailing: TextButton(
@@ -150,7 +171,7 @@ class SettingsScreen extends StatelessWidget {
                 await save(settings.copyWith(
                     quietStartHour: start, quietEndHour: end));
               },
-              child: const Text('Modifier'),
+              child: Text(t.t('edit')),
             ),
           ),
         ),
@@ -160,7 +181,7 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Couleur du thème'),
+                Text(t.t('themeColor')),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -220,8 +241,8 @@ class SettingsScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'HydraBloom, ton alliée douceur pour rester bien hydratée chaque jour.',
+                Text(
+                  t.t('loveCard'),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -232,7 +253,7 @@ class SettingsScreen extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: () => service.sendTestNotification(),
           icon: const Icon(Icons.notifications_active_outlined),
-          label: const Text('Tester une notification maintenant'),
+          label: Text(t.t('testNotification')),
         ),
         const SizedBox(height: 8),
         OutlinedButton.icon(
@@ -242,12 +263,11 @@ class SettingsScreen extends StatelessWidget {
             await Clipboard.setData(ClipboardData(text: json));
             if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text('Backup copie dans le presse-papiers')),
+              SnackBar(content: Text(t.t('backupCopied'))),
             );
           },
           icon: const Icon(Icons.download_rounded),
-          label: const Text('Exporter backup JSON'),
+          label: Text(t.t('exportBackup')),
         ),
         const SizedBox(height: 8),
         OutlinedButton.icon(
@@ -256,23 +276,23 @@ class SettingsScreen extends StatelessWidget {
             final ok = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Text('Importer backup JSON'),
+                title: Text(t.t('importBackup')),
                 content: TextField(
                   controller: controller,
                   minLines: 6,
                   maxLines: 10,
                   decoration: const InputDecoration(
-                    hintText: 'Colle ici le JSON de sauvegarde',
+                    hintText: 'JSON',
                     border: OutlineInputBorder(),
                   ),
                 ),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Annuler')),
+                      child: Text(t.t('cancel'))),
                   FilledButton(
                       onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Importer')),
+                      child: Text(t.t('import'))),
                 ],
               ),
             );
@@ -281,23 +301,23 @@ class SettingsScreen extends StatelessWidget {
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content:
-                        Text(success ? 'Backup importe' : 'JSON invalide')),
+                    content: Text(
+                        success ? t.t('backupImported') : t.t('invalidJson'))),
               );
             }
           },
           icon: const Icon(Icons.upload_rounded),
-          label: const Text('Importer backup JSON'),
+          label: Text(t.t('importBackup')),
         ),
         const SizedBox(height: 8),
         FilledButton(
           onPressed: () => service.resetToday(),
-          child: const Text('Réinitialiser les données du jour'),
+          child: Text(t.t('resetToday')),
         ),
         const SizedBox(height: 8),
         OutlinedButton(
           onPressed: () => service.resetAll(),
-          child: const Text('Réinitialiser toutes les données'),
+          child: Text(t.t('resetAll')),
         ),
       ],
     );

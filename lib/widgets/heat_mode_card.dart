@@ -5,10 +5,14 @@ class HeatModeCard extends StatelessWidget {
     super.key,
     required this.enabled,
     required this.onChanged,
+    this.title = 'Mode chaleur ☀️',
+    this.subtitle = 'Rappels plus frequents et ton chaleur.',
   });
 
   final bool enabled;
   final ValueChanged<bool> onChanged;
+  final String title;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +20,8 @@ class HeatModeCard extends StatelessWidget {
       child: SwitchListTile(
         value: enabled,
         onChanged: onChanged,
-        title: const Text('Mode chaleur ☀️'),
-        subtitle: const Text('Rappels plus frequents et ton chaleur.'),
+        title: Text(title),
+        subtitle: Text(subtitle),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/app_strings.dart';
 import '../models/hydration_day.dart';
 import '../services/hydration_service.dart';
 
@@ -10,12 +11,14 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final service = context.watch<HydrationService>();
+    final t = AppStrings.of(service.settings.languageCode);
     final days = service.last7Days;
-    final all = [...service.history]..sort((a, b) => b.dateKey.compareTo(a.dateKey));
+    final all = [...service.history]
+      ..sort((a, b) => b.dateKey.compareTo(a.dateKey));
     final last30 = all.take(30).toList(growable: false);
 
     if (days.isEmpty) {
-      return const Center(child: Text('Pas encore d\'historique.'));
+      return Center(child: Text(t.t('noHistory')));
     }
 
     final avg7 = _avgIntake(days);
@@ -26,6 +29,7 @@ class HistoryScreen extends StatelessWidget {
     return ListView(
       children: [
         _StatsCard(
+          t: t,
           avg7: avg7,
           avg30: avg30,
           success7: success7,
@@ -41,7 +45,7 @@ class HistoryScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '7 derniers jours',
+                  t.t('last7days'),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
@@ -63,6 +67,7 @@ class HistoryScreen extends StatelessWidget {
 
 class _StatsCard extends StatelessWidget {
   const _StatsCard({
+    required this.t,
     required this.avg7,
     required this.avg30,
     required this.success7,
@@ -71,6 +76,7 @@ class _StatsCard extends StatelessWidget {
     required this.total30,
   });
 
+  final AppStrings t;
   final int avg7;
   final int avg30;
   final int success7;
@@ -86,12 +92,13 @@ class _StatsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Résumé hydratation', style: Theme.of(context).textTheme.titleMedium),
+            Text(t.t('hydrationSummary'),
+                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 10),
-            Text('Moyenne 7 jours: $avg7 ml'),
-            Text('Moyenne 30 jours: $avg30 ml'),
-            Text('Objectifs atteints (7j): $success7/$total7'),
-            Text('Objectifs atteints (30j): $success30/$total30'),
+            Text(t.t('avg7', {'value': '$avg7'})),
+            Text(t.t('avg30', {'value': '$avg30'})),
+            Text(t.t('goals7', {'value': '$success7/$total7'})),
+            Text(t.t('goals30', {'value': '$success30/$total30'})),
           ],
         ),
       ),
@@ -107,7 +114,8 @@ class _DayBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final percent = (day.progress * 100).round();
-    final label = day.dateKey.length >= 10 ? day.dateKey.substring(5) : day.dateKey;
+    final label =
+        day.dateKey.length >= 10 ? day.dateKey.substring(5) : day.dateKey;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),

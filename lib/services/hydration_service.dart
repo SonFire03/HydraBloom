@@ -7,6 +7,7 @@ import '../models/hydration_day.dart';
 import '../models/hydration_settings.dart';
 import 'notification_service.dart';
 import 'storage_service.dart';
+import '../l10n/app_strings.dart';
 
 class HydrationService extends ChangeNotifier {
   HydrationService({
@@ -132,37 +133,39 @@ class HydrationService extends ChangeNotifier {
   }
 
   int get todayIntakeMl => todayGlasses * settings.glassSizeMl;
-  double get progress =>
-      settings.dailyGoalMl == 0 ? 0 : (todayIntakeMl / settings.dailyGoalMl).clamp(0, 1).toDouble();
+  double get progress => settings.dailyGoalMl == 0
+      ? 0
+      : (todayIntakeMl / settings.dailyGoalMl).clamp(0, 1).toDouble();
   int get progressPercent => (progress * 100).round();
 
   String get todayKey => DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   String get progressLabel {
-    if (progressPercent >= 100) return 'Objectif atteint, bravo 👑';
-    if (progressPercent >= 75) return 'Presque au top ✨';
-    if (progressPercent >= 50) return 'Mi-parcours, ta fleur pousse 🌸';
-    if (progressPercent >= 25) return 'Bien lancée, continue comme ça 💧';
-    return 'On commence doucement 🌱';
+    final t = AppStrings.of(settings.languageCode);
+    if (progressPercent >= 100) return t.t('progressLabel100');
+    if (progressPercent >= 75) return t.t('progressLabel75');
+    if (progressPercent >= 50) return t.t('progressLabel50');
+    if (progressPercent >= 25) return t.t('progressLabel25');
+    return t.t('progressLabel0');
   }
 
   String get dailyGentleSummary {
-    if (progress >= 1) return 'Super journee: objectif atteint. Fier(e) de toi.';
-    if (progress >= 0.7) return 'Tres bien avance. Un petit effort et c est gagne.';
-    if (progress >= 0.4) return 'Bonne progression. Continue a ton rythme.';
-    return 'On reprend tranquillement, un verre a la fois.';
+    final t = AppStrings.of(settings.languageCode);
+    if (progress >= 1) return t.t('summary100');
+    if (progress >= 0.7) return t.t('summary70');
+    if (progress >= 0.4) return t.t('summary40');
+    return t.t('summary0');
   }
 
-  List<BadgeModel> get badges => _baseBadges
-      .map((badge) {
+  List<BadgeModel> get badges => _baseBadges.map((badge) {
         final current = _badgeCurrentValue(badge.id);
-        final unlocked = unlockedBadgeIds.contains(badge.id) || current >= badge.target;
+        final unlocked =
+            unlockedBadgeIds.contains(badge.id) || current >= badge.target;
         return badge.copyWith(
           current: current,
           unlocked: unlocked,
         );
-      })
-      .toList(growable: false);
+      }).toList(growable: false);
 
   List<HydrationDay> get last7Days {
     // TODO(hydrabloom): expose a repository interface for Android Home Widget sync.
@@ -249,11 +252,14 @@ class HydrationService extends ChangeNotifier {
   Future<bool> importBackupJson(String raw) async {
     try {
       final map = jsonDecode(raw) as Map<String, dynamic>;
-      settings = HydrationSettings.fromJson((map['settings'] ?? {}) as Map<String, dynamic>);
+      settings = HydrationSettings.fromJson(
+          (map['settings'] ?? {}) as Map<String, dynamic>);
       todayGlasses = (map['todayGlasses'] ?? 0) as int;
       streak = (map['streak'] ?? 0) as int;
       final hist = (map['history'] ?? <dynamic>[]) as List<dynamic>;
-      history = hist.map((e) => HydrationDay.fromJson((e as Map).cast<String, dynamic>())).toList();
+      history = hist
+          .map((e) => HydrationDay.fromJson((e as Map).cast<String, dynamic>()))
+          .toList();
       final badges = (map['unlockedBadges'] ?? <dynamic>[]) as List<dynamic>;
       unlockedBadgeIds = badges.map((e) => e.toString()).toSet();
       mood = (map['mood'] ?? 'focus').toString();
@@ -385,7 +391,8 @@ class HydrationService extends ChangeNotifier {
   }
 
   int get _totalGlasses {
-    final historyGlasses = history.fold<int>(0, (sum, day) => sum + (day.intakeMl ~/ settings.glassSizeMl));
+    final historyGlasses = history.fold<int>(
+        0, (sum, day) => sum + (day.intakeMl ~/ settings.glassSizeMl));
     return historyGlasses + todayGlasses;
   }
 
@@ -397,7 +404,10 @@ class HydrationService extends ChangeNotifier {
 
   int get _heatModeGoalsAchieved {
     final historyGoals = history.where((day) => day.achieved).length;
-    final todayHeatGoal = settings.heatModeEnabled && todayIntakeMl >= settings.dailyGoalMl ? 1 : 0;
+    final todayHeatGoal =
+        settings.heatModeEnabled && todayIntakeMl >= settings.dailyGoalMl
+            ? 1
+            : 0;
     return historyGoals + todayHeatGoal;
   }
 }

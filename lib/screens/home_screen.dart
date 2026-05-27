@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
+import '../l10n/app_strings.dart';
 import '../services/hydration_service.dart';
 import '../widgets/cute_action_button.dart';
 import '../widgets/flower_progress_widget.dart';
@@ -74,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final hydration = context.watch<HydrationService>();
+    final t = AppStrings.of(hydration.settings.languageCode);
 
     final pages = [
       _HomeContent(hydration: hydration),
@@ -93,13 +95,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (value) => setState(() => _index = value),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-              icon: Icon(Icons.home_rounded), label: 'Accueil'),
-          NavigationDestination(icon: Icon(Icons.history), label: 'Historique'),
+              icon: const Icon(Icons.home_rounded), label: t.t('home')),
           NavigationDestination(
-              icon: Icon(Icons.emoji_events_outlined), label: 'Badges'),
-          NavigationDestination(icon: Icon(Icons.tune), label: 'Paramètres'),
+              icon: const Icon(Icons.history), label: t.t('history')),
+          NavigationDestination(
+              icon: const Icon(Icons.emoji_events_outlined),
+              label: t.t('badges')),
+          NavigationDestination(
+              icon: const Icon(Icons.tune), label: t.t('settings')),
         ],
       ),
     );
@@ -114,6 +119,7 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppStrings.of(hydration.settings.languageCode);
     final isGoalReached = hydration.progress >= 1;
     final adhdMode = hydration.settings.adhdModeEnabled;
 
@@ -139,7 +145,7 @@ class _HomeContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Text(
-                'Objectif atteint aujourd’hui, magnifique 👑',
+                t.t('goalReachedBanner'),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
@@ -147,13 +153,19 @@ class _HomeContent extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
-        Center(child: FlowerProgressWidget(progress: hydration.progress)),
+        Center(
+          child: FlowerProgressWidget(
+            progress: hydration.progress,
+            languageCode: hydration.settings.languageCode,
+          ),
+        ),
         const SizedBox(height: 16),
         HydrationProgressCard(
           intakeMl: hydration.todayIntakeMl,
           goalMl: hydration.settings.dailyGoalMl,
           progress: hydration.progress,
           label: hydration.progressLabel,
+          title: t.t('progressDay'),
         ),
         const SizedBox(height: 10),
         Text(
@@ -166,13 +178,20 @@ class _HomeContent extends StatelessWidget {
           WaterCounterCard(
             glasses: hydration.todayGlasses,
             glassSizeMl: hydration.settings.glassSizeMl,
+            title: t.t('waterToday'),
           ),
           const SizedBox(height: 12),
-          StreakCard(streak: hydration.streak),
+          StreakCard(
+            streak: hydration.streak,
+            title: t.t('streakCurrent'),
+            subtitle: t.t('streakDays', {'count': hydration.streak.toString()}),
+          ),
           const SizedBox(height: 12),
           HeatModeCard(
             enabled: hydration.settings.heatModeEnabled,
             onChanged: (value) => hydration.toggleHeatMode(value),
+            title: t.t('heatMode'),
+            subtitle: t.t('heatModeSubtitle'),
           ),
         ],
         const SizedBox(height: 12),
@@ -186,19 +205,19 @@ class _HomeContent extends StatelessWidget {
             HapticFeedback.lightImpact();
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  duration: Duration(milliseconds: 900),
-                  content: Text('Bien joue, +1 verre 💧'),
+                SnackBar(
+                  duration: const Duration(milliseconds: 900),
+                  content: Text(t.t('snackAddedGlass')),
                 ),
               );
             }
           },
-          label: 'J\'ai bu un verre 💧',
+          label: t.t('drinkButton'),
         ),
         if (adhdMode) ...[
           const SizedBox(height: 10),
           Text(
-            'Mode TDAH: une action simple, puis on avance.',
+            t.t('adhdHint'),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
@@ -208,14 +227,15 @@ class _HomeContent extends StatelessWidget {
   }
 
   String _buildWelcomeMessage() {
+    final t = AppStrings.of(hydration.settings.languageCode);
     final hour = DateTime.now().hour;
     if (hydration.progress >= 1) {
-      return 'Tu as déjà géré ton hydratation aujourd’hui.';
+      return t.t('welcomeGoalReached');
     }
     if (hour < 12) {
-      return 'Bonjour, on commence en douceur avec un verre d’eau ?';
+      return t.t('welcomeMorning');
     }
-    if (hour < 18) return 'Bon après-midi, pense à t’hydrater régulièrement.';
-    return 'Bonsoir, encore un petit verre avant la fin de journée ?';
+    if (hour < 18) return t.t('welcomeAfternoon');
+    return t.t('welcomeEvening');
   }
 }

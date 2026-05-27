@@ -9,6 +9,7 @@ class HydrationSettings {
     this.quietEndHour = 8,
     this.themeAccent = 'rose',
     this.adhdModeEnabled = false,
+    this.languageCode = 'fr',
   });
 
   final int dailyGoalMl;
@@ -20,6 +21,7 @@ class HydrationSettings {
   final int quietEndHour;
   final String themeAccent;
   final bool adhdModeEnabled;
+  final String languageCode;
 
   HydrationSettings copyWith({
     int? dailyGoalMl,
@@ -31,6 +33,7 @@ class HydrationSettings {
     int? quietEndHour,
     String? themeAccent,
     bool? adhdModeEnabled,
+    String? languageCode,
   }) {
     return HydrationSettings(
       dailyGoalMl: dailyGoalMl ?? this.dailyGoalMl,
@@ -43,6 +46,7 @@ class HydrationSettings {
       quietEndHour: quietEndHour ?? this.quietEndHour,
       themeAccent: themeAccent ?? this.themeAccent,
       adhdModeEnabled: adhdModeEnabled ?? this.adhdModeEnabled,
+      languageCode: languageCode ?? this.languageCode,
     );
   }
 
@@ -56,6 +60,7 @@ class HydrationSettings {
         'quietEndHour': quietEndHour,
         'themeAccent': themeAccent,
         'adhdModeEnabled': adhdModeEnabled,
+        'languageCode': languageCode,
       };
 
   factory HydrationSettings.fromJson(Map<String, dynamic> json) {
@@ -69,6 +74,7 @@ class HydrationSettings {
       quietEndHour: json['quietEndHour'] ?? 8,
       themeAccent: json['themeAccent'] ?? 'rose',
       adhdModeEnabled: json['adhdModeEnabled'] ?? false,
+      languageCode: json['languageCode'] ?? 'fr',
     );
   }
 }

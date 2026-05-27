@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_strings.dart';
 
 class FlowerProgressWidget extends StatefulWidget {
-  const FlowerProgressWidget({super.key, required this.progress});
+  const FlowerProgressWidget({
+    super.key,
+    required this.progress,
+    this.languageCode = 'fr',
+  });
 
   final double progress;
+  final String languageCode;
 
   @override
   State<FlowerProgressWidget> createState() => _FlowerProgressWidgetState();
@@ -30,6 +36,7 @@ class _FlowerProgressWidgetState extends State<FlowerProgressWidget>
 
   @override
   Widget build(BuildContext context) {
+    final t = AppStrings.of(widget.languageCode);
     final scale = 0.92 + (widget.progress * 0.28);
     final imagePath = widget.progress >= 1
         ? 'photo/Néréabelle.png'
@@ -37,7 +44,9 @@ class _FlowerProgressWidgetState extends State<FlowerProgressWidget>
             ? 'photo/Florali.png'
             : 'photo/Goutili.png';
 
-    final message = widget.progress >= 1 ? 'Objectif valide !' : 'Bravo, continue !';
+    final message = widget.progress >= 1
+        ? t.t('flowerMessageDone')
+        : t.t('flowerMessageGo');
 
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 420),

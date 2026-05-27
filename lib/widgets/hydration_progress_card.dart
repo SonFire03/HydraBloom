@@ -7,12 +7,14 @@ class HydrationProgressCard extends StatelessWidget {
     required this.goalMl,
     required this.progress,
     required this.label,
+    this.title = 'Progression du jour',
   });
 
   final int intakeMl;
   final int goalMl;
   final double progress;
   final String label;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +24,15 @@ class HydrationProgressCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Progression du jour', style: Theme.of(context).textTheme.titleMedium),
+            Text(title, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
-            LinearProgressIndicator(value: progress, minHeight: 12, borderRadius: BorderRadius.circular(12)),
+            LinearProgressIndicator(
+                value: progress,
+                minHeight: 12,
+                borderRadius: BorderRadius.circular(12)),
             const SizedBox(height: 12),
-            Text('$intakeMl ml / $goalMl ml', style: Theme.of(context).textTheme.titleLarge),
+            Text('$intakeMl ml / $goalMl ml',
+                style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 6),
             Text(label),
           ],
