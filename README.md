@@ -1,85 +1,88 @@
 # HydraBloom
 
-HydraBloom est une application Flutter Android, locale-only, pour rappel d'hydratation.
+HydraBloom est une application Flutter Android de rappel d'hydratation, pensée pour rester simple, douce et 100% locale.
 
-## Fonctionnalites MVP
+## Aperçu
 
-- Rappels locaux configurables: 30 / 45 / 60 / 120 min
-- Heures silencieuses (22h -> 8h par defaut)
-- Suivi quotidien (objectif, progression ml/%, compteur de verres)
-- Fleur animee selon progression
-- Mode chaleur manuel
-- Streak local
-- Badges locaux
-- Historique des 7 derniers jours
-- Reset jour / reset complet
-- Material 3 + theme pastel girly doux
+- Rappels d'hydratation configurables (30 / 45 / 60 / 120 min)
+- Heures silencieuses personnalisables
+- Suivi quotidien: objectif, progression, compteur de verres
+- Progression visuelle par compagnon (PNG)
+- Mode chaleur
+- Mode TDAH (interface plus simple)
+- Streak et badges
+- Historique des derniers jours
+- Export / import local en JSON
 
-## Stack
+## Stack technique
 
-- Flutter
-- `flutter_local_notifications`
+- Flutter (Material 3)
+- `provider`
 - `shared_preferences`
+- `flutter_local_notifications`
 - `intl`
 - `timezone`
-- `provider`
 
-## Arborescence
+## Structure du projet
 
-- `lib/main.dart`: bootstrap
-- `lib/app.dart`: MaterialApp
-- `lib/screens/*`: ecrans
-- `lib/services/*`: logique metier + notifications + persistence
-- `lib/models/*`: modeles
-- `lib/widgets/*`: composants UI
-- `lib/theme/app_theme.dart`: theme M3
+- `lib/main.dart` : bootstrap de l'app
+- `lib/app.dart` : configuration `MaterialApp`
+- `lib/screens/` : écrans principaux
+- `lib/services/` : logique métier, notifications, persistance
+- `lib/models/` : modèles
+- `lib/widgets/` : composants UI
+- `lib/theme/` : thème et styles
 
-## Prerequis
+## Prérequis
 
-- Flutter SDK installe et disponible dans le PATH
-- Android SDK
-- Un appareil Android ou emulateur
+- Flutter SDK installé
+- Android SDK configuré
+- Un appareil Android ou un émulateur
 
-## Lancement
+## Lancement local
 
-1. Se placer dans le projet:
-   - `cd /home/sofiane/projects/HydraBloom`
-2. Si le scaffold natif Flutter n'est pas encore complet, le generer:
-   - `flutter create --platforms=android .`
-3. Restaurer dependances:
-   - `flutter pub get`
-4. Lancer l'app:
-   - `flutter run`
+```bash
+cd /home/sofiane/projects/HydraBloom
+flutter pub get
+flutter run
+```
+
+## Qualité
+
+```bash
+flutter analyze
+flutter test
+```
 
 ## Permissions Android
 
-Dans `android/app/src/main/AndroidManifest.xml`:
+Déclarées dans `android/app/src/main/AndroidManifest.xml` :
 
 - `android.permission.POST_NOTIFICATIONS`
 - `android.permission.VIBRATE`
 - `android.permission.RECEIVE_BOOT_COMPLETED`
 - `android.permission.SCHEDULE_EXACT_ALARM`
 
-## Notes fiabilite notifications
+## Confidentialité
 
-- Autorisations demandees au demarrage (notifications + exact alarms)
-- Rappels replanifies lors des changements de parametres
-- Heures silencieuses respectees
-- Receiver boot present pour restaurer les notifications planifiees
+HydraBloom est **local-only** :
 
-## Confidentialite
+- aucun backend
+- aucun compte utilisateur
+- aucun tracking
+- aucune collecte de données personnelles
 
-- Pas de backend
-- Pas de compte utilisateur
-- Pas de tracking
-- Pas de collecte de donnees personnelles
-- Donnees stockees localement (`shared_preferences`)
+Les données sont stockées localement via `shared_preferences`.
 
-## TODO v2
+## Roadmap (v2)
 
 - Widget Android de progression
-- Replanification robuste sur plus de 2 jours (worker natif)
+- Replanification de notifications plus robuste
 - Statistiques mensuelles
 - Mascotte personnalisable
-- Mode meteo auto (API)
-- Localisation FR/EN complete
+- Mode météo auto (API)
+- Localisation FR/EN complète
+
+## Licence
+
+Aucune licence définie pour le moment.
