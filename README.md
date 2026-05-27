@@ -54,6 +54,14 @@ flutter analyze
 flutter test
 ```
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/goutili.png" alt="HydraBloom - Goutili" width="30%" />
+  <img src="docs/screenshots/florali.png" alt="HydraBloom - Florali" width="30%" />
+  <img src="docs/screenshots/nereabelle.png" alt="HydraBloom - Nereabelle" width="30%" />
+</p>
+
 ## Permissions Android
 
 Déclarées dans `android/app/src/main/AndroidManifest.xml` :
