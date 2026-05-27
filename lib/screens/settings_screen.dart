@@ -21,6 +21,13 @@ class SettingsScreen extends StatelessWidget {
 
     return ListView(
       children: [
+        _SettingsQuickSummary(
+          dailyGoalMl: settings.dailyGoalMl,
+          glassSizeMl: settings.glassSizeMl,
+          reminderIntervalMinutes: settings.reminderIntervalMinutes,
+          languageLabel: t.t('lang_${settings.languageCode}'),
+        ),
+        const SizedBox(height: 8),
         const _SectionTitle(title: 'Général'),
         Card(
           child: SwitchListTile(
@@ -274,103 +281,126 @@ class SettingsScreen extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         const _SectionTitle(title: 'Outils'),
-        OutlinedButton.icon(
-          onPressed: () => service.sendTestNotification(),
-          icon: const Icon(Icons.notifications_active_outlined),
-          label: Text(t.t('testNotification')),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          onPressed: () async {
-            final json = await service.exportBackupJson();
-            if (!context.mounted) return;
-            await Clipboard.setData(ClipboardData(text: json));
-            if (!context.mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(t.t('backupCopied'))),
-            );
-          },
-          icon: const Icon(Icons.download_rounded),
-          label: Text(t.t('exportBackup')),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          onPressed: () async {
-            final controller = TextEditingController();
-            final ok = await showDialog<bool>(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text(t.t('importBackup')),
-                content: TextField(
-                  controller: controller,
-                  minLines: 6,
-                  maxLines: 10,
-                  decoration: const InputDecoration(
-                    hintText: 'JSON',
-                    border: OutlineInputBorder(),
-                  ),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () => service.sendTestNotification(),
+                  icon: const Icon(Icons.notifications_active_outlined),
+                  label: Text(t.t('testNotification')),
                 ),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: Text(t.t('cancel'))),
-                  FilledButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: Text(t.t('import'))),
-                ],
-              ),
-            );
-            if (ok == true) {
-              final success = await service.importBackupJson(controller.text);
-              if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(
-                        success ? t.t('backupImported') : t.t('invalidJson'))),
-              );
-            }
-          },
-          icon: const Icon(Icons.upload_rounded),
-          label: Text(t.t('importBackup')),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    final json = await service.exportBackupJson();
+                    if (!context.mounted) return;
+                    await Clipboard.setData(ClipboardData(text: json));
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(t.t('backupCopied'))),
+                    );
+                  },
+                  icon: const Icon(Icons.download_rounded),
+                  label: Text(t.t('exportBackup')),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    final controller = TextEditingController();
+                    final ok = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(t.t('importBackup')),
+                        content: TextField(
+                          controller: controller,
+                          minLines: 6,
+                          maxLines: 10,
+                          decoration: const InputDecoration(
+                            hintText: 'JSON',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: Text(t.t('cancel'))),
+                          FilledButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: Text(t.t('import'))),
+                        ],
+                      ),
+                    );
+                    if (ok == true) {
+                      final success =
+                          await service.importBackupJson(controller.text);
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(success
+                                ? t.t('backupImported')
+                                : t.t('invalidJson'))),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.upload_rounded),
+                  label: Text(t.t('importBackup')),
+                ),
+              ],
+            ),
+          ),
         ),
         const SizedBox(height: 8),
         const _SectionTitle(title: 'Danger Zone'),
-        FilledButton(
-          style: FilledButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.errorContainer,
-            foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.errorContainer,
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onErrorContainer,
+                  ),
+                  onPressed: () async {
+                    final ok = await _confirmReset(
+                      context,
+                      title: t.t('resetToday'),
+                      message:
+                          'Cette action remet uniquement la journée en cours à zéro.',
+                      confirmLabel: t.t('resetToday'),
+                    );
+                    if (ok == true) {
+                      await service.resetToday();
+                    }
+                  },
+                  child: Text(t.t('resetToday')),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.error,
+                  ),
+                  onPressed: () async {
+                    final ok = await _confirmReset(
+                      context,
+                      title: t.t('resetAll'),
+                      message:
+                          'Cette action supprime toutes les données locales.',
+                      confirmLabel: t.t('resetAll'),
+                    );
+                    if (ok == true) {
+                      await service.resetAll();
+                    }
+                  },
+                  child: Text(t.t('resetAll')),
+                ),
+              ],
+            ),
           ),
-          onPressed: () async {
-            final ok = await _confirmReset(
-              context,
-              title: t.t('resetToday'),
-              message:
-                  'Cette action remet uniquement la journée en cours à zéro.',
-              confirmLabel: t.t('resetToday'),
-            );
-            if (ok == true) {
-              await service.resetToday();
-            }
-          },
-          child: Text(t.t('resetToday')),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.error,
-          ),
-          onPressed: () async {
-            final ok = await _confirmReset(
-              context,
-              title: t.t('resetAll'),
-              message: 'Cette action supprime toutes les données locales.',
-              confirmLabel: t.t('resetAll'),
-            );
-            if (ok == true) {
-              await service.resetAll();
-            }
-          },
-          child: Text(t.t('resetAll')),
         ),
       ],
     );
@@ -427,6 +457,43 @@ class _SectionTitle extends StatelessWidget {
             ),
       ),
     );
+  }
+}
+
+class _SettingsQuickSummary extends StatelessWidget {
+  const _SettingsQuickSummary({
+    required this.dailyGoalMl,
+    required this.glassSizeMl,
+    required this.reminderIntervalMinutes,
+    required this.languageLabel,
+  });
+
+  final int dailyGoalMl;
+  final int glassSizeMl;
+  final int reminderIntervalMinutes;
+  final String languageLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _summaryChip('Goal', '$dailyGoalMl ml'),
+            _summaryChip('Glass', '$glassSizeMl ml'),
+            _summaryChip('Reminder', '$reminderIntervalMinutes min'),
+            _summaryChip('Lang', languageLabel),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _summaryChip(String label, String value) {
+    return Chip(label: Text('$label: $value'));
   }
 }
 
