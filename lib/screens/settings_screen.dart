@@ -273,11 +273,11 @@ class SettingsScreen extends StatelessWidget {
         const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: () async {
-            final uri = Uri.parse('https://github.com/SonFire03/HydraBloom');
+            final uri = Uri.parse('https://github.com/SonFire03');
             await launchUrl(uri, mode: LaunchMode.externalApplication);
           },
-          icon: const Icon(Icons.code),
-          label: const Text('GitHub'),
+          icon: const Icon(Icons.code_rounded),
+          label: const Text('Mon profil GitHub'),
         ),
         const SizedBox(height: 8),
         const _SectionTitle(title: 'Outils'),
