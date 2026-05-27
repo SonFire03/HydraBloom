@@ -37,7 +37,7 @@ class _FlowerProgressWidgetState extends State<FlowerProgressWidget>
   @override
   Widget build(BuildContext context) {
     final t = AppStrings.of(widget.languageCode);
-    final scale = 0.92 + (widget.progress * 0.28);
+    final scale = 0.97 + (widget.progress * 0.06);
     final imagePath = widget.progress >= 1
         ? 'photo/Néréabelle.png'
         : widget.progress >= 0.5
@@ -50,14 +50,14 @@ class _FlowerProgressWidgetState extends State<FlowerProgressWidget>
 
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 420),
-      tween: Tween(begin: 0.9, end: scale),
+      tween: Tween(begin: 0.96, end: scale),
       curve: Curves.easeOutBack,
       builder: (context, value, _) {
         return Transform.scale(
           scale: value,
           child: Container(
             width: 230,
-            height: 210,
+            height: 220,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(26),
               gradient: const LinearGradient(
@@ -77,7 +77,7 @@ class _FlowerProgressWidgetState extends State<FlowerProgressWidget>
               animation: _controller,
               builder: (context, child) {
                 final t = _controller.value;
-                final bob = (t - 0.5) * 10;
+                final bob = (t - 0.5) * 6;
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -85,8 +85,8 @@ class _FlowerProgressWidgetState extends State<FlowerProgressWidget>
                       offset: Offset(0, bob),
                       child: Image.asset(
                         imagePath,
-                        width: 120,
-                        height: 120,
+                        width: 108,
+                        height: 108,
                         fit: BoxFit.contain,
                       ),
                     ),
