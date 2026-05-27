@@ -176,8 +176,15 @@ class HydrationService extends ChangeNotifier {
   Future<void> addGlass() async {
     await _rolloverIfNeeded();
 
+    final wasGoalReached = progress >= 1;
     todayGlasses += 1;
     await _storage.saveTodayGlasses(todayGlasses);
+
+    final isGoalReachedNow = progress >= 1;
+    if (!wasGoalReached && isGoalReachedNow) {
+      await _awardStreakForTodayGoal();
+    }
+
     await _refreshBadgeUnlocks();
     notifyListeners();
   }
@@ -319,30 +326,25 @@ class HydrationService extends ChangeNotifier {
 
     await _storage.saveHistory(history.map((e) => e.toJson()).toList());
 
-    if (yesterdayDay.achieved) {
-      if (await _isNextDayAfterLastStreak(savedDate)) {
-        streak += 1;
-      } else {
-        streak = 1;
-      }
-      await _storage.saveStreak(streak);
-      await _storage.saveLastStreakDate(savedDate);
-    } else {
-      streak = 0;
-      await _storage.saveStreak(streak);
-    }
-
     todayGlasses = 0;
     await _storage.saveTodayGlasses(0);
     await _storage.saveTodayDate(todayKey);
   }
 
-  Future<bool> _isNextDayAfterLastStreak(String currentDateKey) async {
+  Future<void> _awardStreakForTodayGoal() async {
     final last = await _storage.loadLastStreakDate();
-    if (last == null) return true;
-    final current = DateFormat('yyyy-MM-dd').parse(currentDateKey);
-    final prev = DateFormat('yyyy-MM-dd').parse(last);
-    return current.difference(prev).inDays == 1;
+    if (last == todayKey) return;
+
+    if (last == null) {
+      streak = 1;
+    } else {
+      final current = DateFormat('yyyy-MM-dd').parse(todayKey);
+      final prev = DateFormat('yyyy-MM-dd').parse(last);
+      streak = current.difference(prev).inDays == 1 ? streak + 1 : 1;
+    }
+
+    await _storage.saveStreak(streak);
+    await _storage.saveLastStreakDate(todayKey);
   }
 
   Future<void> _saveTodayInHistory() async {

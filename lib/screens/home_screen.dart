@@ -8,7 +8,6 @@ import '../services/hydration_service.dart';
 import '../widgets/cute_action_button.dart';
 import '../widgets/flower_progress_widget.dart';
 import '../widgets/hydration_progress_card.dart';
-import '../widgets/streak_card.dart';
 import '../widgets/water_counter_card.dart';
 import 'badges_screen.dart';
 import 'history_screen.dart';
@@ -119,7 +118,6 @@ class _HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppStrings.of(hydration.settings.languageCode);
-    final isGoalReached = hydration.progress >= 1;
     final adhdMode = hydration.settings.adhdModeEnabled;
 
     return ListView(
@@ -129,29 +127,6 @@ class _HomeContent extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 8),
-        if (isGoalReached) ...[
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.96, end: 1),
-            duration: const Duration(milliseconds: 900),
-            curve: Curves.easeInOut,
-            builder: (context, value, child) {
-              return Transform.scale(scale: value, child: child);
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Text(
-                t.t('goalReachedBanner'),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-        ],
         Center(
           child: FlowerProgressWidget(
             progress: hydration.progress,
@@ -179,22 +154,41 @@ class _HomeContent extends StatelessWidget {
             glassSizeMl: hydration.settings.glassSizeMl,
             title: t.t('waterToday'),
           ),
-          const SizedBox(height: 12),
-          StreakCard(
-            streak: hydration.streak,
-            title: t.t('streakCurrent'),
-            subtitle: t.t('streakDays', {'count': hydration.streak.toString()}),
-          ),
         ],
         const SizedBox(height: 12),
         CuteActionButton(
           onPressed: () async {
+            final wasGoalReached = hydration.progress >= 1;
+            final streakBefore = hydration.streak;
+
             await hydration.addGlass();
             await _widgetChannel.invokeMethod(
               'syncWidgetCountFromApp',
               hydration.todayGlasses,
             );
             HapticFeedback.lightImpact();
+
+            final reachedNow = !wasGoalReached && hydration.progress >= 1;
+            if (reachedNow && context.mounted) {
+              await showDialog<void>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(t.t('goalReachedBanner')),
+                  content: Text(
+                    '${t.t('streakCurrent')}\n${t.t('streakDays', {
+                          'count': hydration.streak.toString()
+                        })} (+${hydration.streak - streakBefore})',
+                  ),
+                  actions: [
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
