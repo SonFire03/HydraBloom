@@ -42,7 +42,8 @@ HydraBloom est une application Flutter Android de rappel d'hydratation, pensée 
 ## Lancement local
 
 ```bash
-cd /home/sofiane/projects/HydraBloom
+git clone https://github.com/SonFire03/HydraBloom.git
+cd HydraBloom
 flutter pub get
 flutter run
 ```
