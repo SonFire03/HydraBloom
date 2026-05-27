@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/app_strings.dart';
 import '../models/hydration_settings.dart';
@@ -257,6 +258,15 @@ class SettingsScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
+        OutlinedButton.icon(
+          onPressed: () async {
+            final uri = Uri.parse('https://github.com/SonFire03/HydraBloom');
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          },
+          icon: const Icon(Icons.code),
+          label: const Text('GitHub'),
+        ),
+        const SizedBox(height: 8),
         OutlinedButton.icon(
           onPressed: () => service.sendTestNotification(),
           icon: const Icon(Icons.notifications_active_outlined),
