@@ -106,6 +106,166 @@ class HydrationService extends ChangeNotifier {
       description: 'Atteins 5 objectifs en mode chaleur.',
       target: 5,
     ),
+    BadgeModel(
+      id: 'total_goals_platinum',
+      title: 'Objectifs atteints',
+      level: 'Platine',
+      emoji: '🏆',
+      description: 'Atteins 60 objectifs au total.',
+      target: 60,
+    ),
+    BadgeModel(
+      id: 'total_goals_diamond',
+      title: 'Objectifs atteints',
+      level: 'Diamant',
+      emoji: '💎',
+      description: 'Atteins 120 objectifs au total.',
+      target: 120,
+    ),
+    BadgeModel(
+      id: 'streak_legend',
+      title: 'Serie parfaite',
+      level: 'Legend',
+      emoji: '🔥',
+      description: 'Atteins une serie de 60 jours.',
+      target: 60,
+    ),
+    BadgeModel(
+      id: 'streak_mythic',
+      title: 'Serie parfaite',
+      level: 'Mythique',
+      emoji: '🌟',
+      description: 'Atteins une serie de 120 jours.',
+      target: 120,
+    ),
+    BadgeModel(
+      id: 'glasses_platinum',
+      title: 'Verres bus',
+      level: 'Platine',
+      emoji: '🥤',
+      description: 'Bois 800 verres au total.',
+      target: 800,
+    ),
+    BadgeModel(
+      id: 'glasses_diamond',
+      title: 'Verres bus',
+      level: 'Diamant',
+      emoji: '💧',
+      description: 'Bois 1500 verres au total.',
+      target: 1500,
+    ),
+    BadgeModel(
+      id: 'intake_1l',
+      title: 'Volume total',
+      level: '1 L',
+      emoji: '🫗',
+      description: 'Bois 1 000 ml au total.',
+      target: 1000,
+    ),
+    BadgeModel(
+      id: 'intake_10l',
+      title: 'Volume total',
+      level: '10 L',
+      emoji: '🫗',
+      description: 'Bois 10 000 ml au total.',
+      target: 10000,
+    ),
+    BadgeModel(
+      id: 'intake_50l',
+      title: 'Volume total',
+      level: '50 L',
+      emoji: '🚰',
+      description: 'Bois 50 000 ml au total.',
+      target: 50000,
+    ),
+    BadgeModel(
+      id: 'intake_100l',
+      title: 'Volume total',
+      level: '100 L',
+      emoji: '🌊',
+      description: 'Bois 100 000 ml au total.',
+      target: 100000,
+    ),
+    BadgeModel(
+      id: 'history_3d',
+      title: 'Regularite',
+      level: '3 jours',
+      emoji: '📅',
+      description: 'Suivi actif pendant 3 jours.',
+      target: 3,
+    ),
+    BadgeModel(
+      id: 'history_7d',
+      title: 'Regularite',
+      level: '7 jours',
+      emoji: '📅',
+      description: 'Suivi actif pendant 7 jours.',
+      target: 7,
+    ),
+    BadgeModel(
+      id: 'history_14d',
+      title: 'Regularite',
+      level: '14 jours',
+      emoji: '🗓️',
+      description: 'Suivi actif pendant 14 jours.',
+      target: 14,
+    ),
+    BadgeModel(
+      id: 'history_30d',
+      title: 'Regularite',
+      level: '30 jours',
+      emoji: '🗓️',
+      description: 'Suivi actif pendant 30 jours.',
+      target: 30,
+    ),
+    BadgeModel(
+      id: 'history_90d',
+      title: 'Regularite',
+      level: '90 jours',
+      emoji: '📆',
+      description: 'Suivi actif pendant 90 jours.',
+      target: 90,
+    ),
+    BadgeModel(
+      id: 'heat_mode_apprentice',
+      title: 'Mode chaleur',
+      level: 'Apprenti',
+      emoji: '☀️',
+      description: 'Atteins 1 objectif en mode chaleur.',
+      target: 1,
+    ),
+    BadgeModel(
+      id: 'heat_mode_adept',
+      title: 'Mode chaleur',
+      level: 'Adepte',
+      emoji: '☀️',
+      description: 'Atteins 3 objectifs en mode chaleur.',
+      target: 3,
+    ),
+    BadgeModel(
+      id: 'heat_mode_legend',
+      title: 'Mode chaleur',
+      level: 'Legend',
+      emoji: '🌤️',
+      description: 'Atteins 10 objectifs en mode chaleur.',
+      target: 10,
+    ),
+    BadgeModel(
+      id: 'heat_mode_mythic',
+      title: 'Mode chaleur',
+      level: 'Mythique',
+      emoji: '🌞',
+      description: 'Atteins 25 objectifs en mode chaleur.',
+      target: 25,
+    ),
+    BadgeModel(
+      id: 'first_glass',
+      title: 'Premier pas',
+      level: 'Debut',
+      emoji: '✨',
+      description: 'Bois ton premier verre.',
+      target: 1,
+    ),
   ];
 
   List<HydrationDay> history = [];
@@ -376,16 +536,38 @@ class HydrationService extends ChangeNotifier {
       case 'total_goals_bronze':
       case 'total_goals_silver':
       case 'total_goals_gold':
+      case 'total_goals_platinum':
+      case 'total_goals_diamond':
         return _totalGoalsAchieved;
       case 'streak_bronze':
       case 'streak_silver':
       case 'streak_gold':
+      case 'streak_legend':
+      case 'streak_mythic':
         return streak;
       case 'glasses_bronze':
       case 'glasses_silver':
       case 'glasses_gold':
+      case 'glasses_platinum':
+      case 'glasses_diamond':
+      case 'first_glass':
         return _totalGlasses;
+      case 'intake_1l':
+      case 'intake_10l':
+      case 'intake_50l':
+      case 'intake_100l':
+        return _totalIntakeMl;
+      case 'history_3d':
+      case 'history_7d':
+      case 'history_14d':
+      case 'history_30d':
+      case 'history_90d':
+        return _trackedDays;
+      case 'heat_mode_apprentice':
+      case 'heat_mode_adept':
       case 'heat_mode_master':
+      case 'heat_mode_legend':
+      case 'heat_mode_mythic':
         return _heatModeGoalsAchieved;
       default:
         return 0;
@@ -396,6 +578,15 @@ class HydrationService extends ChangeNotifier {
     final historyGlasses = history.fold<int>(
         0, (sum, day) => sum + (day.intakeMl ~/ settings.glassSizeMl));
     return historyGlasses + todayGlasses;
+  }
+
+  int get _totalIntakeMl {
+    final historyIntake = history.fold<int>(0, (sum, day) => sum + day.intakeMl);
+    return historyIntake + todayIntakeMl;
+  }
+
+  int get _trackedDays {
+    return history.length + (todayGlasses > 0 ? 1 : 0);
   }
 
   int get _totalGoalsAchieved {
