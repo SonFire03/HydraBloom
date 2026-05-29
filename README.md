@@ -10,9 +10,11 @@ HydraBloom est une application Flutter Android de rappel d'hydratation, pensée 
 - Progression visuelle par compagnon (PNG)
 - Mode chaleur
 - Mode TDAH (interface plus simple)
-- Streak et badges
+- Streak et badges (30+ badges)
+- Filtres de badges + animation de déblocage
 - Historique des derniers jours
 - Export / import local en JSON
+- Sélecteur de langue (FR / EN / 中文 / ES / RU / HI / AR / PT)
 
 ## Stack technique
 
@@ -90,8 +92,8 @@ Les données sont stockées localement via `shared_preferences`.
 - Statistiques mensuelles
 - Mascotte personnalisable
 - Mode météo auto (API)
-- Localisation FR/EN complète
+- Localisation plus complète (incl. RTL arabe)
 
 ## Licence
 
-Aucune licence définie pour le moment.
+MIT - voir [LICENSE](LICENSE).
